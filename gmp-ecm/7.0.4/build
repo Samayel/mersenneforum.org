@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+CONFIGUREFLAGS=$2
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+
+pushd $BASEDIR
+
+[ -f ecm-7.0.4.tar.gz ] || wget https://gforge.inria.fr/frs/download.php/file/36224/ecm-7.0.4.tar.gz
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../ecm-7.0.4.tar.gz
+
+CFLAGS="-m64 -march=native -mtune=native" ./configure --enable-$TYPE $CONFIGUREFLAGS --prefix=$BINDIR --with-gmp=$GMPDIR
+make
+make ecm-params
+make
+make check
+make install
+
+popd
