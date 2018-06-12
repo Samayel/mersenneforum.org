@@ -2,6 +2,6 @@
 
 set -e
 
-SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
 exec $SCRIPTDIR/build shared

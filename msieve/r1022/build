@@ -4,10 +4,10 @@ set -e
 
 TYPE=$1
 
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
-GMPDIR=$( cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd )
-ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/7.0.4/bin/$TYPE" && pwd )
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" && pwd -P )
 
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
