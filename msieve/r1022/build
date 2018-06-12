@@ -32,14 +32,14 @@ pushd $SRCDIR
 
 tar -xz --strip 1 --file=../../msieve-code-1022-trunk.tar.gz
 
-sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include\n\1|" Makefile
-sed -i -e "s|\(# tweak the compile flags\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib  \n\n\1|" Makefile
+sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include \n\1|" Makefile
+sed -i -e "s|\(# tweak the compile flags\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib  -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib \n\n\1|" Makefile
 
 make all ECM=1 NO_ZLIB=1
 
 popd
 
 mkdir -p $BINDIR/{bin,include,lib}
-cp $SRCDIR/msieve.exe $BINDIR/bin 
+cp $SRCDIR/msieve $BINDIR/bin
 cp $SRCDIR/include/msieve.h $BINDIR/include
-[ -f $SRCDIR/libmsieve.a ] && cp $SRCDIR/libmsieve.a $BINDIR/lib
+cp $SRCDIR/libmsieve.a $BINDIR/lib
