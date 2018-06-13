@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" && pwd -P )
+MSIEVEDIR=$( cd "$BASEDIR/../../msieve/latest/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+
+pushd $BASEDIR
+
+[ -f yafu-1.34-src.zip ] || wget -O yafu-1.34-src.zip https://sourceforge.net/projects/yafu/files/1.34/yafu-1.34-src.zip/download
+
+popd
+
+pushd $SRCDIR
+
+unzip ../../yafu-1.34-src.zip
+mv ./yafu-1.34.3/* .
+rm -rf ./yafu-1.34.3
+
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include -I$MSIEVEDIR/include \n\1|" Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib     -L$MSIEVEDIR/lib     -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
+
+make x86_64 NFS=1 USE_SSE41=1     # USE_AVX2=1
+
+popd
+
+cp $SRCDIR/yafu $BINDIR/
+cp $SRCDIR/yafu.ini $BINDIR/

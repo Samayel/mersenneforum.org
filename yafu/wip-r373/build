@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" && pwd -P )
+MSIEVEDIR=$( cd "$BASEDIR/../../msieve/latest/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+
+pushd $BASEDIR
+
+if [ ! -f yafu-code-373-branches-wip.tar.gz ]; then
+    svn checkout -r373 https://svn.code.sf.net/p/yafu/code/branches/wip yafu-code-373-branches-wip
+    tar -czf yafu-code-373-branches-wip.tar.gz yafu-code-373-branches-wip
+    rm -rf yafu-code-373-branches-wip
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../yafu-code-373-branches-wip.tar.gz
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include -I$MSIEVEDIR/include \n\1|" Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib     -L$MSIEVEDIR/lib     -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
+
+make all NFS=1 USE_SSE41=1     # USE_AVX2=1
+
+popd
+
+cp $SRCDIR/yafu $BINDIR/
+cp $SRCDIR/yafu.ini $BINDIR/
