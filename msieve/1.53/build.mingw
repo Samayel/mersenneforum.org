@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"     || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp-ecm/7.0.4/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+
+pushd $BASEDIR
+
+[ -f msieve153_src.tar.gz ] || wget -O msieve153_src.tar.gz https://sourceforge.net/projects/msieve/files/msieve/Msieve%20v1.53/msieve153_src.tar.gz/download
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../msieve153_src.tar.gz
+
+sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include \n\1|" Makefile
+sed -i -e "s|\(# tweak the compile flags\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib  -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib \n\n\1|" Makefile
+
+make all ECM=1 NO_ZLIB=1 WIN=1 WIN64=1
+
+popd
+
+mkdir -p $BINDIR/{bin,include,lib}
+cp $SRCDIR/msieve.exe $BINDIR/bin
+cp $SRCDIR/include/msieve.h $BINDIR/include
+cp $SRCDIR/libmsieve.a $BINDIR/lib
