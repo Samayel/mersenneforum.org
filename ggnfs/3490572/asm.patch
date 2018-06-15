@@ -1,0 +1,119 @@
+diff --git a/src/experimental/lasieve4_64/athlon64/mpqs_td.asm b/src/experimental/lasieve4_64/athlon64/mpqs_td.asm
+index b9ee994..8e0f976 100644
+--- a/src/experimental/lasieve4_64/athlon64/mpqs_td.asm
++++ b/src/experimental/lasieve4_64/athlon64/mpqs_td.asm
+@@ -290,7 +290,7 @@ divloop:
+ 	mull %ecx
+ 	testl %edx,%edx
+ 	jnz tdloop
+-	cmpw $27,nr
++	cmpw $27,nrw
+ 	jnc gotonext
+ 	movl aux4d,%eax
+ 	movw aux5w,10(relptr,nr,2)
+@@ -321,10 +321,10 @@ divloopk:
+ 	mull %ecx
+ 	testl %edx,%edx
+ 	jnz tdloopk
+-	cmpw $27,nr
++	cmpw $27,nrw
+ 	jnc gotonext
+ 	movl aux4d,%eax
+-	movw nr1,10(relptr,nr,2)
++	movw nr1w,10(relptr,nr,2)
+ 	incq nr
+ 	movl aux4d,qxd
+ 	jmp divloopk
+@@ -354,7 +354,7 @@ divloopa:
+ 	testl %edx,%edx
+ 	jnz tdloopa
+ 	movl aux4d,%eax
+-	cmpw $27,nr
++	cmpw $27,nrw
+ 	jnc gotonext
+ 	addw nr1w,aux5w
+ 	movw aux5w,10(relptr,nr,2)
+diff --git a/src/experimental/lasieve4_64/athlon64/tdslinie.asm b/src/experimental/lasieve4_64/athlon64/tdslinie.asm
+index 544062e..ec1caef 100644
+--- a/src/experimental/lasieve4_64/athlon64/tdslinie.asm
++++ b/src/experimental/lasieve4_64/athlon64/tdslinie.asm
+@@ -10,6 +10,7 @@ dnl Now, the registers which we are going to use
+ define(sieve_ptr,%r8)dnl
+ define(sieve_ptr_ub,%r9)dnl
+ define(root,%r10)dnl
++define(rootw,%r10w)dnl
+ define(prime,%r11)dnl
+ define(prime32,%r11d)dnl
+ define(sv0,%al)dnl
+@@ -115,7 +116,7 @@ tdslinie_tloop`'i`'d:
+ tdslinie_next_j`'i:
+ ')
+ 	cmpq aux_ptr,aux_ptr_ub
+-	movw root,root_src
++	movw rootw,root_src
+ 	leaq 8(aux_ptr),aux_ptr
+ 	ja tdslinie_fbi_loop
+ tdslinie_ende:
+diff --git a/src/experimental/lasieve4_64/athlon64/tdslinie1.asm b/src/experimental/lasieve4_64/athlon64/tdslinie1.asm
+index 913472f..6b13854 100644
+--- a/src/experimental/lasieve4_64/athlon64/tdslinie1.asm
++++ b/src/experimental/lasieve4_64/athlon64/tdslinie1.asm
+@@ -10,6 +10,7 @@ dnl Now, the registers which we are going to use
+ define(sieve_ptr,%r8)dnl
+ define(sieve_ptr_ub,%r9)dnl
+ define(root,%r10)dnl
++define(rootw,%r10w)dnl
+ define(prime,%r11)dnl
+ define(prime32,%r11d)dnl
+ define(sv0,%al)dnl
+@@ -58,7 +59,7 @@ forloop(`i',1,j_per_strip,`
+ 	jnz tdslinie1_suche
+ tdslinie1_nextfbi:
+ 	cmpq aux_ptr,aux_ptr_ub
+-	movw root,root_src
++	movw rootw,root_src
+ 	leaq 8(aux_ptr),aux_ptr
+ 	ja tdslinie1_fbi_loop
+ tdslinie1_ende:
+diff --git a/src/experimental/lasieve4_64/athlon64/tdslinie2.asm b/src/experimental/lasieve4_64/athlon64/tdslinie2.asm
+index 627538d..611d19f 100644
+--- a/src/experimental/lasieve4_64/athlon64/tdslinie2.asm
++++ b/src/experimental/lasieve4_64/athlon64/tdslinie2.asm
+@@ -10,6 +10,7 @@ dnl Now, the registers which we are going to use
+ define(sieve_ptr,%r8)dnl
+ define(sieve_ptr_ub,%r9)dnl
+ define(root,%r10)dnl
++define(rootw,%r10w)dnl
+ define(prime,%r11)dnl
+ define(prime32,%r11d)dnl
+ define(sv0,%al)dnl
+@@ -57,7 +58,7 @@ tdslinie2_next_j`'i:
+ 	jnz tdslinie2_suche
+ tdslinie2_next_fbi:
+ 	cmpq aux_ptr,aux_ptr_ub
+-	movw root,root_src
++	movw rootw,root_src
+ 	leaq 8(aux_ptr),aux_ptr
+ 	ja tdslinie2_fbi_loop
+ tdslinie2_ende:
+diff --git a/src/experimental/lasieve4_64/athlon64/tdslinie3.asm b/src/experimental/lasieve4_64/athlon64/tdslinie3.asm
+index f7cd2ae..3a2ae5e 100644
+--- a/src/experimental/lasieve4_64/athlon64/tdslinie3.asm
++++ b/src/experimental/lasieve4_64/athlon64/tdslinie3.asm
+@@ -7,6 +7,7 @@ dnl Now, the registers which we are going to use
+ define(sieve_ptr,%r8)dnl
+ define(sieve_ptr_ub,%r9)dnl
+ define(root,%r10)dnl
++define(rootw,%r10w)dnl
+ define(prime,%r11)dnl
+ define(prime32,%r11d)dnl
+ define(sv0,%al)dnl
+@@ -73,7 +74,7 @@ tdslinie3_tdloop`'i`'a:
+ tdslinie3_next_j`'i:
+ ')
+ 	cmpq aux_ptr,aux_ptr_ub
+-	movw root,root_src
++	movw rootw,root_src
+ 	leaq 8(aux_ptr),aux_ptr
+ 	ja tdslinie3_fbi_loop
+ tdslinie3_ende:

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR=$BASEDIR/../../bin/ggnfs
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f ggnfs-master-3490572.tar.gz ]; then
+    git clone https://github.com/radii/ggnfs ggnfs-master-3490572
+    git -C ggnfs-master-3490572 checkout 3490572ca8671635a1b8d13a28aef3e34a657fc7
+    tar -czf ggnfs-master-3490572.tar.gz ggnfs-master-3490572
+    rm -rf ggnfs-master-3490572
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../ggnfs-master-3490572.tar.gz
+
+pushd src/experimental/lasieve4_64
+
+sed -i -e 's|-march=k8 -mtune=k8|-march=native -mtune=native|' Makefile
+sed -i -e 's|-march=k8 -mtune=k8|-march=native -mtune=native|' athlon64/Makefile
+
+git apply $BASEDIR/asm.patch
+
+cd athlon64
+make liblasieve.a
+make liblasieveI11.a
+make liblasieveI12.a
+make liblasieveI13.a
+make liblasieveI14.a
+make liblasieveI15.a
+make liblasieveI16.a
+cp *.a ..
+cd ..
+ln -s athlon64 asm
+make
+cp gnfs-lasieve4I1{1,2,3,4,5,6}e $BINDIR
+
+popd
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/gnfs-lasieve4I11e ] && ln -srf $BINDIR/gnfs-lasieve4I11e $ROOTBINDIR/gnfs-lasieve4I11e
+    [ -f $BINDIR/gnfs-lasieve4I12e ] && ln -srf $BINDIR/gnfs-lasieve4I12e $ROOTBINDIR/gnfs-lasieve4I12e
+    [ -f $BINDIR/gnfs-lasieve4I13e ] && ln -srf $BINDIR/gnfs-lasieve4I13e $ROOTBINDIR/gnfs-lasieve4I13e
+    [ -f $BINDIR/gnfs-lasieve4I14e ] && ln -srf $BINDIR/gnfs-lasieve4I14e $ROOTBINDIR/gnfs-lasieve4I14e
+    [ -f $BINDIR/gnfs-lasieve4I15e ] && ln -srf $BINDIR/gnfs-lasieve4I15e $ROOTBINDIR/gnfs-lasieve4I15e
+    [ -f $BINDIR/gnfs-lasieve4I16e ] && ln -srf $BINDIR/gnfs-lasieve4I16e $ROOTBINDIR/gnfs-lasieve4I16e
+fi
