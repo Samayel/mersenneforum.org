@@ -12,11 +12,14 @@ ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
+ROOTBINDIR=$BASEDIR/../../bin
+
 rm -rf $BINDIR
 rm -rf $SRCDIR
 
 mkdir -p $BINDIR
 mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
@@ -43,3 +46,8 @@ mkdir -p $BINDIR/{bin,include,lib}
 cp $SRCDIR/msieve.exe $BINDIR/bin
 cp $SRCDIR/include/msieve.h $BINDIR/include
 cp $SRCDIR/libmsieve.a $BINDIR/lib
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/msieve.exe ] && cp $BINDIR/bin/msieve.exe $ROOTBINDIR/
+    cp /mingw64/bin/libwinpthread-1.dll $ROOTBINDIR/
+fi

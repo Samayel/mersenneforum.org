@@ -41,5 +41,7 @@ make install
 popd
 
 if [ "$TYPE" == "shared" ]; then
-    [ -f $BINDIR/bin/ecm ] && ln -srf $BINDIR/bin/ecm $ROOTBINDIR/ecm
+    [ -f $BINDIR/bin/ecm -a ! -f $BINDIR/bin/ecm.exe ] && ln -srf $BINDIR/bin/ecm     $ROOTBINDIR/ecm
+    [ -f $BINDIR/bin/ecm.exe ]                         && cp $BINDIR/bin/ecm.exe      $ROOTBINDIR/
+    [ -f $BINDIR/bin/libecm-1.dll ]                    && cp $BINDIR/bin/libecm-1.dll $ROOTBINDIR/
 fi

@@ -10,11 +10,14 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
+ROOTBINDIR=$BASEDIR/../../bin
+
 rm -rf $BINDIR
 rm -rf $SRCDIR
 
 mkdir -p $BINDIR
 mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
@@ -32,3 +35,7 @@ make check
 make install
 
 popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/libgmp-10.dll ] && cp $BINDIR/bin/libgmp-10.dll $ROOTBINDIR/libgmp-10.dll
+fi

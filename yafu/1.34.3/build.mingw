@@ -13,11 +13,14 @@ MSIEVEDIR=$( cd "$BASEDIR/../../msieve/latest/bin/$TYPE" || cd "$BASEDIR/../../m
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
+ROOTBINDIR=$BASEDIR/../../bin
+
 rm -rf $BINDIR
 rm -rf $SRCDIR
 
 mkdir -p $BINDIR
 mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
@@ -40,3 +43,8 @@ popd
 
 cp $SRCDIR/yafu-x64.exe $BINDIR/yafu.exe
 cp $SRCDIR/yafu.ini $BINDIR/
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/yafu.exe ]                              && cp $BINDIR/yafu.exe $ROOTBINDIR/
+    [ -f $BINDIR/yafu.ini -a ! -f $ROOTBINDIR/yafu.ini ] && cp $BINDIR/yafu.ini $ROOTBINDIR/
+fi
