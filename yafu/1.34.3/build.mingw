@@ -52,3 +52,5 @@ if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/yafu.exe ]                              && cp $BINDIR/yafu.exe $ROOTBINDIR/
     [ -f $BINDIR/yafu.ini -a ! -f $ROOTBINDIR/yafu.ini ] && cp $BINDIR/yafu.ini $ROOTBINDIR/
 fi
+
+exit 0

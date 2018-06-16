@@ -47,3 +47,5 @@ if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/bin/msieve.exe ] && cp $BINDIR/bin/msieve.exe $ROOTBINDIR/
     cp /mingw64/bin/libwinpthread-1.dll $ROOTBINDIR/
 fi
+
+exit 0

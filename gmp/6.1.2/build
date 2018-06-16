@@ -39,3 +39,5 @@ popd
 if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/bin/libgmp-10.dll ] && cp $BINDIR/bin/libgmp-10.dll $ROOTBINDIR/libgmp-10.dll
 fi
+
+exit 0

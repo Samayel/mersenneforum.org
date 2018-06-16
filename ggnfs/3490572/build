@@ -68,3 +68,5 @@ if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/gnfs-lasieve4I15e ] && ln -srf $BINDIR/gnfs-lasieve4I15e $ROOTBINDIR/gnfs-lasieve4I15e
     [ -f $BINDIR/gnfs-lasieve4I16e ] && ln -srf $BINDIR/gnfs-lasieve4I16e $ROOTBINDIR/gnfs-lasieve4I16e
 fi
+
+exit 0

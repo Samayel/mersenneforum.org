@@ -50,3 +50,5 @@ cp $SRCDIR/libmsieve.a $BINDIR/lib
 if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/bin/msieve ] && ln -srf $BINDIR/bin/msieve $ROOTBINDIR/msieve
 fi
+
+exit 0

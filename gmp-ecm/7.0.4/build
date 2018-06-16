@@ -45,3 +45,5 @@ if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/bin/ecm.exe ]                         && cp $BINDIR/bin/ecm.exe      $ROOTBINDIR/
     [ -f $BINDIR/bin/libecm-1.dll ]                    && cp $BINDIR/bin/libecm-1.dll $ROOTBINDIR/
 fi
+
+exit 0
