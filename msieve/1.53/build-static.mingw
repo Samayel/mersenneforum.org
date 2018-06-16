@@ -4,4 +4,4 @@ set -e
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
-exec $SCRIPTDIR/build.mingw static
+$SCRIPTDIR/build.mingw static
