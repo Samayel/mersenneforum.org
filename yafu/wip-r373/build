@@ -46,6 +46,10 @@ popd
 cp $SRCDIR/yafu $BINDIR/
 cp $SRCDIR/yafu.ini $BINDIR/
 
+sed -i -e 's|^threads=.*$|threads=2|' $BINDIR/yafu.ini
+sed -i -e 's|^ggnfs_dir=.*$|ggnfs_dir=./ggnfs/|' $BINDIR/yafu.ini
+sed -i -e 's|^ecm_path=.*$|ecm_path=./ecm|' $BINDIR/yafu.ini
+
 if [ "$TYPE" == "shared" ]; then
     [ -f $BINDIR/yafu ]                                  && ln -srf $BINDIR/yafu $ROOTBINDIR/yafu
     [ -f $BINDIR/yafu.ini -a ! -f $ROOTBINDIR/yafu.ini ] && cp $BINDIR/yafu.ini $ROOTBINDIR/
