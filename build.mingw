@@ -10,4 +10,4 @@ $BASEDIR/gmp/6.1.2/build-shared
 $BASEDIR/gmp-ecm/7.0.4/build-shared
 $BASEDIR/msieve/r1022/build-shared.mingw
 $BASEDIR/yafu/wip-r373/build-shared.mingw
-$BASEDIR/ggnfs/3490572/build-shared.mingw
+$BASEDIR/ggnfs/2011-04-23_3490572/build-shared.mingw
