@@ -31,7 +31,7 @@ pushd $SRCDIR
 
 tar -xz --strip 1 --file=../../ecm-7.0.4.tar.gz
 
-CFLAGS="-m64 -march=native -mtune=native" ./configure --enable-$TYPE $CONFIGUREFLAGS --prefix=$BINDIR --with-gmp=$GMPDIR
+CFLAGS="-m64 -march=native -mtune=native" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" ./configure --enable-$TYPE $CONFIGUREFLAGS --prefix=$BINDIR --with-gmp=$GMPDIR
 make
 make ecm-params
 make
