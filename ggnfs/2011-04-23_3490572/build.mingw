@@ -34,7 +34,7 @@ cp gnfs-lasieve4I1* $BINDIR/
 
 popd
 
-if [ "$TYPE" == "shared" ]; then
+if [ "$TYPE" == "static" ]; then
     cp $BINDIR/gnfs-lasieve4I1* $ROOTBINDIR/
 fi
 

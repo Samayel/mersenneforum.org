@@ -7,8 +7,18 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 ROOTBINDIR=$BASEDIR/bin
 
 $BASEDIR/gmp/latest/build-shared
+$BASEDIR/gmp/latest/build-static
+
 $BASEDIR/gmp-ecm/latest/build-shared
+$BASEDIR/gmp-ecm/latest/build-static
+
+$BASEDIR/msieve/stable/build-shared
 $BASEDIR/msieve/latest/build-shared
+
+$BASEDIR/yafu/stable/build-shared
 $BASEDIR/yafu/latest/build-shared
-$BASEDIR/ggnfs/latest/build-shared
+
+$BASEDIR/ggnfs/latest/build-static
+
+$BASEDIR/cado-nfs/stable/build-shared
 $BASEDIR/cado-nfs/latest/build-shared
