@@ -11,3 +11,4 @@ $BASEDIR/gmp-ecm/latest/build-shared
 $BASEDIR/msieve/latest/build-shared
 $BASEDIR/yafu/latest/build-shared
 $BASEDIR/ggnfs/latest/build-shared
+$BASEDIR/cado-nfs/latest/build-shared

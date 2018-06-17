@@ -1,4 +1,6 @@
 ggnfs/
+cado-nfs-client.py
+cado-nfs.py
 ecm
 ecm.exe
 libecm-1.dll
