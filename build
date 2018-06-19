@@ -7,6 +7,8 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 $BASEDIR/gmp/latest/build-shared
 $BASEDIR/gmp/latest/build-static
 
+$BASEDIR/gmp-ecm/stable/build-shared
+$BASEDIR/gmp-ecm/stable/build-static
 $BASEDIR/gmp-ecm/latest/build-shared
 $BASEDIR/gmp-ecm/latest/build-static
 

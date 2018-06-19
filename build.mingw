@@ -9,6 +9,8 @@ $BASEDIR/gmp/6.1.2/build-static
 
 $BASEDIR/gmp-ecm/7.0.4/build-shared
 $BASEDIR/gmp-ecm/7.0.4/build-static
+$BASEDIR/gmp-ecm/r3030/build-shared
+$BASEDIR/gmp-ecm/r3030/build-static
 
 $BASEDIR/msieve/1.53/build-shared.mingw
 $BASEDIR/msieve/r1022/build-shared.mingw

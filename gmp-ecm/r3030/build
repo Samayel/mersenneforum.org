@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+CONFIGUREFLAGS=$2
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR=$BASEDIR/../../bin
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f ecm-trunk-3030.tar.gz ]; then
+    svn checkout -r3030 https://scm.gforge.inria.fr/anonscm/svn/ecm/trunk/ ecm-trunk-3030
+    tar -czf ecm-trunk-3030.tar.gz ecm-trunk-3030
+    rm -rf ecm-trunk-3030
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../ecm-trunk-3030.tar.gz
+
+libtoolize
+autoreconf -i
+
+CFLAGS="-m64 -march=native -mtune=native" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" ./configure --enable-$TYPE $CONFIGUREFLAGS --prefix=$BINDIR --with-gmp=$GMPDIR
+make
+make ecm-params
+make
+make check
+make install
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/ecm -a ! -f $BINDIR/bin/ecm.exe ] && ln -srf $BINDIR/bin/ecm     $ROOTBINDIR/ecm
+    [ -f $BINDIR/bin/ecm.exe ]                         && cp $BINDIR/bin/ecm.exe      $ROOTBINDIR/
+    [ -f $BINDIR/bin/libecm-1.dll ]                    && cp $BINDIR/bin/libecm-1.dll $ROOTBINDIR/
+fi
+
+exit 0
