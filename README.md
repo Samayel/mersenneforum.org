@@ -4,6 +4,7 @@
 
 * fundamentals
   * gmp
+  * gwnum
 
 * prime factorization
   * gmp-ecm
