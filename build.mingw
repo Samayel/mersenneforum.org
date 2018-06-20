@@ -18,4 +18,4 @@ $BASEDIR/yafu/wip-r373/build-shared.mingw
 
 $BASEDIR/ggnfs/2011-04-23_3490572/build-static.mingw
 
-$BASEDIR/gwnum/29.4b7/build-static.mingw
+$BASEDIR/gwnum/29.4b7/build-static
