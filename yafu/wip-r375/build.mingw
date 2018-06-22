@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"       || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE"   || cd "$BASEDIR/../../gmp-ecm/7.0.4/bin/$TYPE" && pwd -P )
+MSIEVEDIR=$( cd "$BASEDIR/../../msieve/latest/bin/$TYPE" || cd "$BASEDIR/../../msieve/r1022/bin/$TYPE"  && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR=$BASEDIR/../../bin
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f yafu-code-375-branches-wip.tar.gz ]; then
+    svn checkout -r375 https://svn.code.sf.net/p/yafu/code/branches/wip yafu-code-375-branches-wip
+    tar -czf yafu-code-375-branches-wip.tar.gz yafu-code-375-branches-wip
+    rm -rf yafu-code-375-branches-wip
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../yafu-code-375-branches-wip.tar.gz
+
+sed -i -e "s|\(# ===================== architecture options =========================\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include -I$MSIEVEDIR/include \n\1|" Makefile.mingw
+sed -i -e "s|\(# ===================== architecture options =========================\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib     -L$MSIEVEDIR/lib     -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile.mingw
+
+make -f Makefile.mingw x86_64 NFS=1 USE_SSE41=1     # USE_AVX2=1
+
+popd
+
+cp $SRCDIR/yafu-x64-mingw.exe $BINDIR/yafu.exe
+cp $SRCDIR/yafu.ini $BINDIR/
+
+sed -i -e 's|^threads=.*$|threads=2|' $BINDIR/yafu.ini
+sed -i -e 's|^ggnfs_dir=.*$|ggnfs_dir=.\\ggnfs\\|' $BINDIR/yafu.ini
+sed -i -e 's|^ecm_path=.*$|ecm_path=.\\ecm.exe|' $BINDIR/yafu.ini
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/yafu.exe ]                              && cp $BINDIR/yafu.exe $ROOTBINDIR/
+    [ -f $BINDIR/yafu.ini -a ! -f $ROOTBINDIR/yafu.ini ] && cp $BINDIR/yafu.ini $ROOTBINDIR/
+fi
+
+exit 0
