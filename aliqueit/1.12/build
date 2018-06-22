@@ -6,6 +6,8 @@ TYPE=$1
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
@@ -20,6 +22,7 @@ mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
+[ -f aliqueit112.zip ]       || wget http://mklasson.com/aliqueit112.zip
 [ -f aliqueit112_linux.tgz ] || wget http://mklasson.com/aliqueit112_linux.tgz
 
 popd
@@ -28,6 +31,10 @@ pushd $SRCDIR
 
 tar -xz --file=../../aliqueit112_linux.tgz
 
+# unzip ../../aliqueit112.zip
+# mv ./aliqueit112/* .
+# rm -rf ./aliqueit112
+
 sed -i -e "s|ecm_cmd = ecm|ecm_cmd = $ROOTBINDIR/ecm|" aliqueit.ini
 sed -i -e "s|ecmpy_cmd = python2 ecm.py|ecmpy_cmd = python2 $ROOTBINDIR/ecm.py|" aliqueit.ini
 sed -i -e "s|yafu_cmd = yafu|yafu_cmd = $ROOTBINDIR/yafu|" aliqueit.ini
@@ -35,6 +42,14 @@ sed -i -e "s|msieve_cmd = msieve|msieve_cmd = $ROOTBINDIR/msieve|" aliqueit.ini
 sed -i -e "s|ggnfs_cmd = factMsieve.pl|ggnfs_cmd = $ROOTBINDIR/factMsieve.pl|" aliqueit.ini
 
 cp aliqueit* $BINDIR
+
+# cd src/aliqueit
+#
+# sed -i -e "s|GMP_DIR = ../gmp/include|GMP_DIR = $GMPDIR/include|" Makefile
+# sed -i -e "s|LIBS = -L../gmp/lib/linux -lgmp|LIBS = -L$GMPDIR/lib -lgmp|" Makefile
+#
+# make
+# cp aliqueit $BINDIR
 
 popd
 
