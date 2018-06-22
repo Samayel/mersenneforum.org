@@ -24,3 +24,5 @@ $BASEDIR/cado-nfs/stable/build-shared
 $BASEDIR/cado-nfs/latest/build-shared
 
 $BASEDIR/gwnum/latest/build-static
+
+$BASEDIR/aliqueit/latest/build-shared

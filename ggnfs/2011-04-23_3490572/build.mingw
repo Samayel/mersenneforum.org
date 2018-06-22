@@ -9,7 +9,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
-ROOTBINDIR=$BASEDIR/../../bin/ggnfs
+ROOTBINDIR="$( cd "$BASEDIR/../../bin/ggnfs" && pwd -P )"
 
 rm -rf $BINDIR
 rm -rf $SRCDIR

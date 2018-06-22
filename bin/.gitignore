@@ -1,4 +1,7 @@
 ggnfs/
+aliqueit
+aliqueit.ini
+aliqueit.txt
 cado-nfs-client.py
 cado-nfs.py
 ecm

@@ -11,7 +11,7 @@ GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
-ROOTBINDIR=$BASEDIR/../../bin/ggnfs
+ROOTBINDIR="$( cd "$BASEDIR/../../bin/ggnfs" && pwd -P )"
 
 rm -rf $BINDIR
 rm -rf $SRCDIR

@@ -12,7 +12,7 @@ ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
 
-ROOTBINDIR=$BASEDIR/../../bin
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
 
 rm -rf $BINDIR
 rm -rf $SRCDIR

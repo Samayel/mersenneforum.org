@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f aliqueit112_linux.tgz ] || wget http://mklasson.com/aliqueit112_linux.tgz
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --file=../../aliqueit112_linux.tgz
+
+sed -i -e "s|ecm_cmd = ecm|ecm_cmd = $ROOTBINDIR/ecm|" aliqueit.ini
+sed -i -e "s|ecmpy_cmd = python2 ecm.py|ecmpy_cmd = python2 $ROOTBINDIR/ecm.py|" aliqueit.ini
+sed -i -e "s|yafu_cmd = yafu|yafu_cmd = $ROOTBINDIR/yafu|" aliqueit.ini
+sed -i -e "s|msieve_cmd = msieve|msieve_cmd = $ROOTBINDIR/msieve|" aliqueit.ini
+sed -i -e "s|ggnfs_cmd = factMsieve.pl|ggnfs_cmd = $ROOTBINDIR/factMsieve.pl|" aliqueit.ini
+
+cp aliqueit* $BINDIR
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/aliqueit ]     && ln -srf $BINDIR/aliqueit     $ROOTBINDIR/aliqueit
+    [ -f $BINDIR/aliqueit.ini ] && ln -srf $BINDIR/aliqueit.ini $ROOTBINDIR/aliqueit.ini
+    [ -f $BINDIR/aliqueit.txt ] && ln -srf $BINDIR/aliqueit.txt $ROOTBINDIR/aliqueit.txt
+fi
+
+exit 0

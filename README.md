@@ -13,6 +13,9 @@
   * ggnfs
   * cado-nfs
 
+* aliquot sequences
+  * aliqueit
+
 ## INSTALL
 
 * run ./build resp. ./build.mingw
