@@ -35,6 +35,16 @@ pushd $SRCDIR
 
 tar -xz --strip 1 --file=../../ggnfs-master-3490572.tar.gz
 
+sed -i -e "s|^LOCALINC=.*$|LOCALINC=-I$GMPDIR/include|" Makefile
+sed -i -e "s|^LOCALLIB=.*$|LOCALLIB=-L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib|" Makefile
+sed -i -e 's|@ARCH="k8"|@ARCH="native"|' Makefile
+
+sed -i -e 's|LSBINS=latsiever polsel|LSBINS=polsel|' src/Makefile
+sed -i -e 's|strip $(BINS) ../bin/gnfs-lasieve4I1?e ../bin/pol51*|strip $(BINS) ../bin/pol51*|' src/Makefile
+
+make x86_64
+cp bin/* $BINDIR
+
 pushd src/experimental/lasieve4_64
 
 sed -i -e "s|-march=k8 -mtune=k8|-march=native -mtune=native|" Makefile
@@ -64,6 +74,21 @@ popd
 popd
 
 if [ "$TYPE" == "static" ]; then
+    [ -f $BINDIR/autogplot.sh ]      && ln -srf $BINDIR/autogplot.sh      $ROOTBINDIR/autogplot.sh
+    [ -f $BINDIR/def-nm-params.txt ] && ln -srf $BINDIR/def-nm-params.txt $ROOTBINDIR/def-nm-params.txt
+    [ -f $BINDIR/def-par.txt ]       && ln -srf $BINDIR/def-par.txt       $ROOTBINDIR/def-par.txt
+    [ -f $BINDIR/makefb ]            && ln -srf $BINDIR/makefb            $ROOTBINDIR/makefb
+    [ -f $BINDIR/matbuild ]          && ln -srf $BINDIR/matbuild          $ROOTBINDIR/matbuild
+    [ -f $BINDIR/matprune ]          && ln -srf $BINDIR/matprune          $ROOTBINDIR/matprune
+    [ -f $BINDIR/matsolve ]          && ln -srf $BINDIR/matsolve          $ROOTBINDIR/matsolve
+    [ -f $BINDIR/pol51m0b ]          && ln -srf $BINDIR/pol51m0b          $ROOTBINDIR/pol51m0b
+    [ -f $BINDIR/pol51m0n ]          && ln -srf $BINDIR/pol51m0n          $ROOTBINDIR/pol51m0n
+    [ -f $BINDIR/pol51opt ]          && ln -srf $BINDIR/pol51opt          $ROOTBINDIR/pol51opt
+    [ -f $BINDIR/polyselect ]        && ln -srf $BINDIR/polyselect        $ROOTBINDIR/polyselect
+    [ -f $BINDIR/procrels ]          && ln -srf $BINDIR/procrels          $ROOTBINDIR/procrels
+    [ -f $BINDIR/sieve ]             && ln -srf $BINDIR/sieve             $ROOTBINDIR/sieve
+    [ -f $BINDIR/sqrt ]              && ln -srf $BINDIR/sqrt              $ROOTBINDIR/sqrt
+
     [ -f $BINDIR/gnfs-lasieve4I11e ] && ln -srf $BINDIR/gnfs-lasieve4I11e $ROOTBINDIR/gnfs-lasieve4I11e
     [ -f $BINDIR/gnfs-lasieve4I12e ] && ln -srf $BINDIR/gnfs-lasieve4I12e $ROOTBINDIR/gnfs-lasieve4I12e
     [ -f $BINDIR/gnfs-lasieve4I13e ] && ln -srf $BINDIR/gnfs-lasieve4I13e $ROOTBINDIR/gnfs-lasieve4I13e
