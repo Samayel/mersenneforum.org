@@ -7,6 +7,7 @@ cado-nfs.py
 ecm
 ecm.exe
 ecm.py
+factmsieve.py
 libecm-1.dll
 libgmp-10.dll
 libwinpthread-1.dll

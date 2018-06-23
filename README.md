@@ -12,6 +12,8 @@
   * yafu
   * ggnfs
   * cado-nfs
+  * ecm.py
+  * factmsieve.py
 
 * aliquot sequences
   * aliqueit

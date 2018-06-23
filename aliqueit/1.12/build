@@ -39,7 +39,7 @@ sed -i -e "s|ecm_cmd = ecm|ecm_cmd = $ROOTBINDIR/ecm|" aliqueit.ini
 sed -i -e "s|ecmpy_cmd = python2 ecm.py|ecmpy_cmd = $ROOTBINDIR/ecm.py|" aliqueit.ini
 sed -i -e "s|yafu_cmd = yafu|yafu_cmd = $ROOTBINDIR/yafu|" aliqueit.ini
 sed -i -e "s|msieve_cmd = msieve|msieve_cmd = $ROOTBINDIR/msieve|" aliqueit.ini
-sed -i -e "s|ggnfs_cmd = factMsieve.pl|ggnfs_cmd = $ROOTBINDIR/factMsieve.pl|" aliqueit.ini
+sed -i -e "s|ggnfs_cmd = factMsieve.pl|ggnfs_cmd = $ROOTBINDIR/factmsieve.py|" aliqueit.ini
 sed -i -e "s|use_ecmpy = false|use_ecmpy = true|" aliqueit.ini
 sed -i -e "s|gnfs_cutoff = 89|gnfs_cutoff = 95|" aliqueit.ini
 
