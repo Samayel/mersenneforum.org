@@ -1,0 +1,18 @@
+--- aliqueit.cc.orig	2018-06-23 13:03:25.495098530 +0000
++++ aliqueit.cc	2018-06-23 13:04:58.427645793 +0000
+@@ -757,13 +757,13 @@
+ 					log_and_print( error_header + "not a number: " + s + "\n" );
+ 					exit( 1 );
+ 				}
+-				factors.push_back( make_pair( p, atoi( e.c_str() ) ) );
++				factors.push_back( make_pair( mpz_class( p ), atoi( e.c_str() ) ) );
+ 			} else {
+ 				if( !isnumber( s ) ) {
+ 					log_and_print( error_header + "not a number: " + s + "\n" );
+ 					exit( 1 );
+ 				}
+-				factors.push_back( make_pair( s, 1 ) );
++				factors.push_back( make_pair( mpz_class( s ), 1 ) );
+ 			}
+ 		}
+ 		sigma( factors, smn, vn );
