@@ -49,7 +49,7 @@ cp aliqueit.txt $BINDIR
 cd src/aliqueit
 
 sed -i -e "s|GMP_DIR = ../gmp/include|GMP_DIR = $GMPDIR/include|" Makefile
-sed -i -e "s|LIBS = -L../gmp/lib/linux -lgmp|LIBS = -L$GMPDIR/lib -lgmp|" Makefile
+sed -i -e "s|LIBS = -L../gmp/lib/linux -lgmp|LIBS = -L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib -lgmp|" Makefile
 patch < $BASEDIR/b2scale.patch
 patch < $BASEDIR/mpz_class.patch
 
