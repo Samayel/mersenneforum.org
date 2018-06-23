@@ -1,0 +1,34 @@
+--- src/yafu.pl	2018-06-23 17:30:53.782067400 +0000
++++ bin/yafu.pl	2018-06-23 18:16:05.799671900 +0000
+@@ -3,9 +3,18 @@
+ use warnings;
+ use strict;
+ use LWP::Simple;
++use LWP::UserAgent;
+ 
+ my %total;
+ 
++my $user="YOURuser";
++my $password="YOURpw";
++
++# login to factordb
++my $ua       = LWP::UserAgent->new();
++$ua->cookie_jar( {} );
++my $response = $ua->post("http://factordb.com/login.php", { 'user' => $user, 'pass' => $password, 'dlogin' => "Login" } );
++
+ while(1){
+     print "get composites\n";
+     my $rand=int(rand(100));
+@@ -34,9 +43,11 @@
+ 	    if ( scalar(@results) > 0 ) {
+ 		print "===========================================================================\n";
+ 		print "report factors\n";
++		# login again
++		$response = $ua->post("http://factordb.com/login.php", { 'user' => $user, 'pass' => $password, 'dlogin' => "Login" } );
+ 		my $url="http://factordb.com/report.php?report=".$composite."%3D".join('*',@results);
+ 		#print "$url\n";
+-		$contents=get($url);
++		$contents=$ua->get($url);
+ 		#print "$contents\n";
+ 
+ 		my $nofactors     = ($contents =~ s/Does not divide//g);
