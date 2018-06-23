@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin
+SRCDIR=$BASEDIR/src
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f pup_v0.4.0_linux_amd64.zip ] || wget https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
+[ -f wiki.html ] || wget -O wiki.html https://www.rechenkraft.net/wiki/Benutzer_Diskussion:Yoyo/factordb
+
+popd
+
+pushd $SRCDIR
+
+unzip ../pup_v0.4.0_linux_amd64.zip
+
+./pup -f ../wiki.html 'pre:nth-of-type(2) text{}' | recode html..latin1 > ali.pl
+sed -i -e 's|\xC2\xA0| |g' ali.pl
+
+chmod a+x ali.pl
+cp ali.pl $BINDIR/
+
+popd
+
+[ -f $BINDIR/ali.pl ] && ln -srf $BINDIR/ali.pl $ROOTBINDIR/ali.pl
+
+exit 0

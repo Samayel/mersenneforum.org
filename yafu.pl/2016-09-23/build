@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin
+SRCDIR=$BASEDIR/src
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f pup_v0.4.0_linux_amd64.zip ] || wget https://github.com/ericchiang/pup/releases/download/v0.4.0/pup_v0.4.0_linux_amd64.zip
+[ -f wiki.html ] || wget -O wiki.html https://www.rechenkraft.net/wiki/Benutzer_Diskussion:Yoyo/factordb
+
+popd
+
+pushd $SRCDIR
+
+unzip ../pup_v0.4.0_linux_amd64.zip
+
+./pup -f ../wiki.html 'pre:nth-of-type(1) text{}' | recode html..latin1 > yafu.pl
+sed -i -e 's|-threads 8||' yafu.pl
+sed -i -e 's|\xC2\xA0| |g' yafu.pl
+
+chmod a+x yafu.pl
+cp yafu.pl $BINDIR/
+
+popd
+
+[ -f $BINDIR/yafu.pl ] && ln -srf $BINDIR/yafu.pl $ROOTBINDIR/yafu.pl
+
+exit 0
