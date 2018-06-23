@@ -58,9 +58,9 @@ cp aliqueit $BINDIR
 popd
 
 if [ "$TYPE" == "shared" ]; then
-    [ -f $BINDIR/aliqueit ]     && ln -srf $BINDIR/aliqueit     $ROOTBINDIR/aliqueit
-    [ -f $BINDIR/aliqueit.ini ] && ln -srf $BINDIR/aliqueit.ini $ROOTBINDIR/aliqueit.ini
-    [ -f $BINDIR/aliqueit.txt ] && ln -srf $BINDIR/aliqueit.txt $ROOTBINDIR/aliqueit.txt
+    [ -f $BINDIR/aliqueit ]                                      && ln -srf $BINDIR/aliqueit     $ROOTBINDIR/aliqueit
+    [ -f $BINDIR/aliqueit.txt ]                                  && ln -srf $BINDIR/aliqueit.txt $ROOTBINDIR/aliqueit.txt
+    [ -f $BINDIR/aliqueit.ini -a ! -f $ROOTBINDIR/aliqueit.ini ] && cp $BINDIR/aliqueit.ini      $ROOTBINDIR/
 fi
 
 exit 0
