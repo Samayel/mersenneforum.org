@@ -24,5 +24,6 @@ $BASEDIR/cado-nfs/stable/build-shared
 $BASEDIR/cado-nfs/latest/build-shared
 
 $BASEDIR/aliqueit/latest/build-shared
+$BASEDIR/ecm.py/latest/build
 
 $BASEDIR/gwnum/latest/build-static

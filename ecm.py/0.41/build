@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin
+SRCDIR=$BASEDIR/src
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f ecm-py_v0.41.zip ] || wget -O ecm-py_v0.41.zip 'http://www.mersenneforum.org/attachment.php?attachmentid=14857&d=1472909477'
+
+popd
+
+pushd $SRCDIR
+
+unzip ../ecm-py_v0.41.zip
+chmod a+x ecm.py
+sed -i -e '1s|^|#!/usr/bin/env python2\n|' ecm.py
+
+cp ecm.py $BINDIR/
+
+popd
+
+[ -f $BINDIR/ecm.py ] && ln -srf $BINDIR/ecm.py $ROOTBINDIR/ecm.py
+
+exit 0
