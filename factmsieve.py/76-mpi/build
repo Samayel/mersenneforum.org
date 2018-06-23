@@ -18,13 +18,13 @@ mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
-[ -f factmsieve.76.zip ] || wget http://starreloaders.com/edhall/AliWin/factmsieve.76.zip
+[ -f factmsievempi.py ] || wget http://www.starreloaders.com/edhall/AliWin/factmsievempi.py
 
 popd
 
 pushd $SRCDIR
 
-unzip ../factmsieve.76.zip
+cp ../factmsievempi.py factmsieve.py
 chmod a+x factmsieve.py
 
 sed -i -e '1s|^|#!/usr/bin/env python2\n|' factmsieve.py
