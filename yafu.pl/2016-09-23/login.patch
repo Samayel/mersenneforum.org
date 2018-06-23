@@ -1,5 +1,5 @@
---- src/yafu.pl	2018-06-23 17:30:53.782067400 +0000
-+++ bin/yafu.pl	2018-06-23 18:16:05.799671900 +0000
+--- src/yafu.pl	2018-06-23 19:03:09.628834400 +0000
++++ bin/yafu.pl	2018-06-23 19:04:08.969016800 +0000
 @@ -3,9 +3,18 @@
  use warnings;
  use strict;
@@ -19,7 +19,7 @@
  while(1){
      print "get composites\n";
      my $rand=int(rand(100));
-@@ -34,9 +43,11 @@
+@@ -34,9 +43,12 @@
  	    if ( scalar(@results) > 0 ) {
  		print "===========================================================================\n";
  		print "report factors\n";
@@ -28,7 +28,8 @@
  		my $url="http://factordb.com/report.php?report=".$composite."%3D".join('*',@results);
  		#print "$url\n";
 -		$contents=get($url);
-+		$contents=$ua->get($url);
++		$response = $ua->get($url);
++		$contents = $response->decoded_content();
  		#print "$contents\n";
  
  		my $nofactors     = ($contents =~ s/Does not divide//g);
