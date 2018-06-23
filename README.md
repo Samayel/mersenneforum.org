@@ -35,6 +35,21 @@
     * NFS (RSA-110)
 * prime factorization: ./bin/cado-nfs.py
   * ./cado-nfs.py 90377629292003121684002147101760858109247336549001090677693
+* aliquot sequences: ./aliqueit
+  * ecm.py + factmsieve.py via ./aliqueit XXX
+  * yafu via ./aliqueit -y XXX
+  * XXX = 840
+    * height: 49 digits @ 284
+    * length: prime 601 @ 746
+  * XXX = 3630
+    * height: 100 digits @ 1263
+    * length: prime 59 @ 2623
+  * XXX = 6160
+    * height: 96 digits @ 1631
+    * length: prime 601 @ 3026
+  * XXX = 407856
+    * height: 128 digits @ 955
+    * length: prime 41 @ 2181
 
 ## RECOMMENDED READING
 
