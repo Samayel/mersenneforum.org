@@ -48,6 +48,8 @@ sed -i -e "s|^ggnfs_cmd = .*$|ggnfs_cmd = $ROOTBINDIR/factmsieve.py|" aliqueit.i
 sed -i -e "s|^use_ecmpy = .*$|use_ecmpy = true|" aliqueit.ini
 sed -i -e "s|^gnfs_cutoff = .*$|gnfs_cutoff = 95|" aliqueit.ini
 
+sed -i -e "s|verify_terminations = false;|verify_terminations = false|" aliqueit.ini
+
 cp aliqueit.ini $BINDIR
 cp aliqueit.txt $BINDIR
 
