@@ -27,4 +27,7 @@ $BASEDIR/aliqueit/stable/build-shared
 $BASEDIR/ecm.py/stable/build
 $BASEDIR/factmsieve.py/stable/build
 
+$BASEDIR/ali.pl/latest/build
+$BASEDIR/yafu.pl/latest/build
+
 $BASEDIR/gwnum/latest/build-static
