@@ -29,7 +29,7 @@ pushd $SRCDIR
 
 tar -xj --strip 1 --file=../../gmp-6.1.2.tar.bz2
 
-CFLAGS="-m64 -march=native -mtune=native" ./configure --enable-$TYPE $CONFIGUREFLAGS --prefix=$BINDIR
+CFLAGS="-m64 -march=native -mtune=native" ./configure --enable-$TYPE $CONFIGUREFLAGS --enable-cxx --prefix=$BINDIR
 make
 make check
 make install

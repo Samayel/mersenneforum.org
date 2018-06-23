@@ -29,27 +29,31 @@ popd
 
 pushd $SRCDIR
 
-tar -xz --file=../../aliqueit112_linux.tgz
+unzip ../../aliqueit112.zip
+mv ./aliqueit112/* .
+rm -rf ./aliqueit112
 
-# unzip ../../aliqueit112.zip
-# mv ./aliqueit112/* .
-# rm -rf ./aliqueit112
+tar -xz --file=../../aliqueit112_linux.tgz aliqueit.ini
 
 sed -i -e "s|ecm_cmd = ecm|ecm_cmd = $ROOTBINDIR/ecm|" aliqueit.ini
-sed -i -e "s|ecmpy_cmd = python2 ecm.py|ecmpy_cmd = python2 $ROOTBINDIR/ecm.py|" aliqueit.ini
+sed -i -e "s|ecmpy_cmd = python2 ecm.py|ecmpy_cmd = $ROOTBINDIR/ecm.py|" aliqueit.ini
 sed -i -e "s|yafu_cmd = yafu|yafu_cmd = $ROOTBINDIR/yafu|" aliqueit.ini
 sed -i -e "s|msieve_cmd = msieve|msieve_cmd = $ROOTBINDIR/msieve|" aliqueit.ini
 sed -i -e "s|ggnfs_cmd = factMsieve.pl|ggnfs_cmd = $ROOTBINDIR/factMsieve.pl|" aliqueit.ini
+sed -i -e "s|use_ecmpy = false|use_ecmpy = true|" aliqueit.ini
+sed -i -e "s|gnfs_cutoff = 89|gnfs_cutoff = 95|" aliqueit.ini
 
-cp aliqueit* $BINDIR
+cp aliqueit.ini $BINDIR
+cp aliqueit.txt $BINDIR
 
-# cd src/aliqueit
-#
-# sed -i -e "s|GMP_DIR = ../gmp/include|GMP_DIR = $GMPDIR/include|" Makefile
-# sed -i -e "s|LIBS = -L../gmp/lib/linux -lgmp|LIBS = -L$GMPDIR/lib -lgmp|" Makefile
-#
-# make
-# cp aliqueit $BINDIR
+cd src/aliqueit
+
+sed -i -e "s|GMP_DIR = ../gmp/include|GMP_DIR = $GMPDIR/include|" Makefile
+sed -i -e "s|LIBS = -L../gmp/lib/linux -lgmp|LIBS = -L$GMPDIR/lib -lgmp|" Makefile
+patch < $BASEDIR/b2scale.patch
+
+make
+cp aliqueit $BINDIR
 
 popd
 
