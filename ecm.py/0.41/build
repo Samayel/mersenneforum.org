@@ -26,7 +26,7 @@ pushd $SRCDIR
 
 unzip ../ecm-py_v0.41.zip
 chmod a+x ecm.py
-sed -i -e '1s|^|#!/usr/bin/env python\n|' ecm.py
+sed -i -e '1s|^|#!/usr/bin/env python2\n|' ecm.py
 
 cp ecm.py $BINDIR/
 
