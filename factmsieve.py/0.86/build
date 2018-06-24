@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin
+SRCDIR=$BASEDIR/src
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f factmsieve.py ] || wget http://brg.a2hosted.com/oldsite/computing/factmsieve.py
+
+popd
+
+pushd $SRCDIR
+
+cp ../factmsieve.py .
+chmod a+x factmsieve.py
+
+sed -i 's/\r//g' factmsieve.py
+
+sed -i -e '1s|^|#!/usr/bin/env python2\n|' factmsieve.py
+sed -i -e "s|  al = {} if VERBOSE else {'creationflags' : 0x08000000 }|  al = {}|" factmsieve.py
+
+sed -i -e "s|^GGNFS_PATH = .*$|GGNFS_PATH = '$ROOTBINDIR/ggnfs/'|" factmsieve.py
+sed -i -e "s|^MSIEVE_PATH = .*$|MSIEVE_PATH = '$ROOTBINDIR/'|" factmsieve.py
+sed -i -e "s|^NUM_CORES = .*$|NUM_CORES = 2|" factmsieve.py
+sed -i -e "s|^THREADS_PER_CORE = .*$|THREADS_PER_CORE = 1|" factmsieve.py
+sed -i -e "s|^USE_CUDA = .*$|USE_CUDA = False|" factmsieve.py
+sed -i -e "s|^MSIEVE_POLY_TIME_LIMIT = .*$|MSIEVE_POLY_TIME_LIMIT = 0|" factmsieve.py
+sed -i -e "s|^VERBOSE = True$|VERBOSE = False|" factmsieve.py
+
+cp factmsieve.py $BINDIR/
+
+popd
+
+[ -f $BINDIR/factmsieve.py ] && ln -srf $BINDIR/factmsieve.py $ROOTBINDIR/factmsieve.py
+
+exit 0
