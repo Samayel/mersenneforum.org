@@ -39,6 +39,8 @@ tar -xz --strip 1 --file=../../yafu-code-375-branches-wip.tar.gz
 sed -i -e "s|\(# ===================== compiler options =========================\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include -I$MSIEVEDIR/include \n\1|" Makefile
 sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib     -L$MSIEVEDIR/lib     -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
 
+sed -i -e 's|\(printf("error Q != RHS\\n");\)|// \1|' factor/qs/siqs_test.c
+
 make all NFS=1 USE_SSE41=1     # USE_AVX2=1
 
 popd
