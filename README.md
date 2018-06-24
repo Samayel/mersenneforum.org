@@ -54,4 +54,5 @@
 ## RECOMMENDED READING
 
 * http://www.mersenneforum.org/showthread.php?t=23078
+  * http://www.mersenneforum.org/showpost.php?p=487757&postcount=7
 * http://www.starreloaders.com/edhall/AliWin/AliqueitLinstall.html
