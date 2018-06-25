@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin
+SRCDIR=$BASEDIR/src
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f ggnfs-master-3490572.tar.gz ]; then
+    git clone https://github.com/radii/ggnfs ggnfs-master-3490572
+    git -C ggnfs-master-3490572 checkout 3490572ca8671635a1b8d13a28aef3e34a657fc7
+    tar -czf ggnfs-master-3490572.tar.gz ggnfs-master-3490572
+    rm -rf ggnfs-master-3490572
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 2 --file=../ggnfs-master-3490572.tar.gz ggnfs-master-3490572/tests/factMsieve.pl
+
+sed -i -e 's|^$GGNFS_BIN_PATH=.*;$|$GGNFS_BIN_PATH="./ggnfs";|' factMsieve.pl
+sed -i -e 's|^$MSIEVE=$GGNFS_BIN_PATH."/msieve"|$MSIEVE=$GGNFS_BIN_PATH."/../msieve"|' factMsieve.pl
+sed -i -e 's|^$NUM_CPUS=.*;$|$NUM_CPUS=2;|' factMsieve.pl
+
+cp factMsieve.pl $BINDIR/
+
+popd
+
+[ -f $BINDIR/factMsieve.pl ] && ln -srf $BINDIR/factMsieve.pl $ROOTBINDIR/factMsieve.pl
+
+exit 0
