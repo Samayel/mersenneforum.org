@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin
+SRCDIR=$BASEDIR/src
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f factMsieve.pl.txt ] || wget -O factMsieve.pl.txt 'http://ftp.mersenneforum.org/attachment.php?attachmentid=7829&d=1332864153'
+
+popd
+
+pushd $SRCDIR
+
+cp ../factMsieve.pl.txt ./factMsieve.pl
+chmod a+x factMsieve.pl
+
+sed -i -e 's|^my $GGNFS_BIN_PATH=.*;|my $GGNFS_BIN_PATH="./ggnfs";|' factMsieve.pl
+sed -i -e 's|^my $MSIEVE_BIN_PATH=$GGNFS_BIN_PATH;|my $MSIEVE_BIN_PATH=".";|' factMsieve.pl
+sed -i -e 's|^my $NUM_CPUS=1;|my $NUM_CPUS=2;|' factMsieve.pl
+
+cp factMsieve.pl $BINDIR/
+
+popd
+
+[ -f $BINDIR/factMsieve.pl ] && ln -srf $BINDIR/factMsieve.pl $ROOTBINDIR/factMsieve.pl
+
+exit 0

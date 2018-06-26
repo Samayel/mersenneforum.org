@@ -31,9 +31,9 @@ pushd $SRCDIR
 
 tar -xz --strip 2 --file=../ggnfs-master-3490572.tar.gz ggnfs-master-3490572/tests/factMsieve.pl
 
-sed -i -e 's|^$GGNFS_BIN_PATH=.*;$|$GGNFS_BIN_PATH="./ggnfs";|' factMsieve.pl
+sed -i -e 's|^$GGNFS_BIN_PATH=.*;|$GGNFS_BIN_PATH="./ggnfs";|' factMsieve.pl
 sed -i -e 's|^$MSIEVE=$GGNFS_BIN_PATH."/msieve"|$MSIEVE=$GGNFS_BIN_PATH."/../msieve"|' factMsieve.pl
-sed -i -e 's|^$NUM_CPUS=.*;$|$NUM_CPUS=2;|' factMsieve.pl
+sed -i -e 's|^$NUM_CPUS=.*;|$NUM_CPUS=2;|' factMsieve.pl
 
 cp factMsieve.pl $BINDIR/
 
