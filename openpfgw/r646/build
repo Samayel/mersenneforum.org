@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$(   cd "$BASEDIR/../../gmp/latest/bin/static" || cd "$BASEDIR/../../gmp/6.1.2/bin/static"  && pwd -P )
+# openpfgw insists on version GWNUM 28.6
+# http://www.mersenneforum.org/showpost.php?p=452574&postcount=13
+GWNUMDIR=$( cd "$BASEDIR/../../gwnum/28.6/bin/static" || cd "$BASEDIR/../../gwnum/28.6/bin/static" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f openpfgw-code-646.tar.gz ]; then
+    svn checkout -r646 https://svn.code.sf.net/p/openpfgw/code openpfgw-code-646
+    tar -czf openpfgw-code-646.tar.gz openpfgw-code-646
+    rm -rf openpfgw-code-646
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../openpfgw-code-646.tar.gz
+
+sed -i -e "s|-I../../packages/gmp/64bit|-I$GMPDIR/include|g" make.inc
+sed -i -e "s|packages/gmp/64bit/libgmp.a|$GMPDIR/lib/libgmp.a|" makefile
+sed -i -e "s|packages/gwnum/64bit/gwnum.a|$GWNUMDIR/lib/gwnum.a|" makefile
+sed -i -e 's|-Wl,-no_pie||g' makefile
+
+make
+
+popd
+
+cp $SRCDIR/pfgw64 $BINDIR/
+
+if [ "$TYPE" == "static" ]; then
+    [ -f $BINDIR/pfgw64 ] && ln -srf $BINDIR/pfgw64 $ROOTBINDIR/pfgw64
+fi
+
+exit 0

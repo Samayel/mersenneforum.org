@@ -30,4 +30,6 @@ $BASEDIR/factmsieve.py/stable/build
 $BASEDIR/ali.pl/latest/build
 $BASEDIR/yafu.pl/latest/build
 
+$BASEDIR/gwnum/stable/build-static
 $BASEDIR/gwnum/latest/build-static
+$BASEDIR/openpfgw/latest/build-static

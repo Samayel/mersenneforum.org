@@ -18,6 +18,9 @@
 * aliquot sequences
   * aliqueit
 
+* primality tests
+  * openpfgw (PrimeForm/GW)
+
 ## INSTALL
 
 * run ./build resp. ./build.mingw
