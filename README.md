@@ -21,6 +21,9 @@
 * primality tests
   * openpfgw (PrimeForm/GW)
 
+* prime number generation
+  * primesieve
+
 ## INSTALL
 
 * run ./build resp. ./build.mingw

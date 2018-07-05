@@ -33,3 +33,5 @@ $BASEDIR/yafu.pl/latest/build
 $BASEDIR/gwnum/stable/build-static
 $BASEDIR/gwnum/latest/build-static
 $BASEDIR/openpfgw/latest/build-static
+
+$BASEDIR/primesieve/latest/build-shared
