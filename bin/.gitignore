@@ -15,6 +15,7 @@ libgmp-10.dll
 libwinpthread-1.dll
 msieve
 msieve.exe
+pfgw64
 yafu
 yafu.exe
 yafu.ini
