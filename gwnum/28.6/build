@@ -20,13 +20,13 @@ mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
-[ -f p95v294b7.source.zip ] || wget https://www.mersenne.org/ftp_root/gimps/p95v294b7.source.zip
+[ -f p95v286.source.zip ] || wget https://www.mersenne.org/ftp_root/gimps/p95v286.source.zip
 
 popd
 
 pushd $SRCDIR
 
-unzip ../../p95v294b7.source.zip || true
+unzip ../../p95v286.source.zip || true
 cd gwnum
 
 make -f make64
