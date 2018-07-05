@@ -23,6 +23,7 @@
 
 * prime number generation
   * primesieve
+  * primecount
 
 ## INSTALL
 

@@ -35,3 +35,4 @@ $BASEDIR/gwnum/latest/build-static
 $BASEDIR/openpfgw/latest/build-static
 
 $BASEDIR/primesieve/latest/build-shared
+$BASEDIR/primecount/latest/build-shared
