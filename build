@@ -12,6 +12,9 @@ $BASEDIR/gmp-ecm/stable/build-static
 $BASEDIR/gmp-ecm/latest/build-shared
 $BASEDIR/gmp-ecm/latest/build-static
 
+$BASEDIR/ecm.py/latest/build
+$BASEDIR/ecmpi/latest/build-shared
+
 $BASEDIR/msieve/stable/build-shared
 $BASEDIR/msieve/latest/build-shared
 
@@ -19,13 +22,13 @@ $BASEDIR/yafu/stable/build-shared
 $BASEDIR/yafu/latest/build-shared
 
 $BASEDIR/ggnfs/latest/build-static
+$BASEDIR/factmsieve.py/latest/build
+$BASEDIR/factMsieve.pl/latest/build
 
 $BASEDIR/cado-nfs/stable/build-shared
 $BASEDIR/cado-nfs/latest/build-shared
 
 $BASEDIR/aliqueit/stable/build-shared
-$BASEDIR/ecm.py/stable/build
-$BASEDIR/factmsieve.py/stable/build
 
 $BASEDIR/ali.pl/latest/build
 $BASEDIR/yafu.pl/latest/build

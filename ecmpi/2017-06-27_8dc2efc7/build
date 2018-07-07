@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"     || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp-ecm/r3030/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f ecmpi-master-8dc2efc7.tar.gz ]; then
+    git clone https://gite.lirmm.fr/bouvier/ecmpi.git ecmpi-master-8dc2efc7
+    git -C ecmpi-master-8dc2efc7 checkout 8dc2efc74e2845ce30f97bd5f40355a2b51dc0aa
+    tar -czf ecmpi-master-8dc2efc7.tar.gz ecmpi-master-8dc2efc7
+    rm -rf ecmpi-master-8dc2efc7
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../ecmpi-master-8dc2efc7.tar.gz
+
+mkdir builddir
+cd builddir
+GMP=$GMPDIR ECM=$ECMDIR cmake ..
+make
+
+cp ecmpi $BINDIR
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/ecmpi ] && ln -srf $BINDIR/ecmpi $ROOTBINDIR/ecmpi
+fi
+
+exit 0

@@ -8,12 +8,14 @@
 
 * prime factorization
   * gmp-ecm
+    * ecm.py
+    * ecmpi
   * msieve
   * yafu
   * ggnfs
+    * factmsieve.py
+    * factMsieve.pl
   * cado-nfs
-  * ecm.py
-  * factmsieve.py
 
 * aliquot sequences
   * aliqueit
@@ -24,6 +26,10 @@
 * prime number generation
   * primesieve
   * primecount
+
+* factordb.com
+  * ali.pl
+  * yafu.pl
 
 ## INSTALL
 
