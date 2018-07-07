@@ -49,8 +49,8 @@
 * prime factorization: ./bin/cado-nfs.py
   * ./cado-nfs.py 90377629292003121684002147101760858109247336549001090677693
 * aliquot sequences: ./aliqueit
-  * ecm.py + factmsieve.py via ./aliqueit XXX
-  * yafu via ./aliqueit -y XXX
+  * ecm.py + factmsieve.py via ./aliqueit -i 0 XXX XXX
+  * yafu via ./aliqueit -y -i 0 XXX XXX
   * XXX = 840
     * height: 49 digits @ 284
     * length: prime 601 @ 746

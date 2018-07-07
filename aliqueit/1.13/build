@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f aliqueit-1.13.tar.gz ] || wget -O aliqueit-1.13.tar.gz https://github.com/ChristianBeer/aliqueit/archive/v1.13.tar.gz
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../aliqueit-1.13.tar.gz
+
+sed -i -e "s|^\(ggnfs_clean_cmd = del\)|//\1|" aliqueit.ini
+sed -i -e "s|^//\(ggnfs_clean_cmd = rm\)|\1|" aliqueit.ini
+sed -i -e "s|^\(null_device = nul\)|//\1|" aliqueit.ini
+sed -i -e "s|^//\(null_device = /dev\)|\1|" aliqueit.ini
+
+sed -i -e "s|^ecm_cmd = .*$|ecm_cmd = $ROOTBINDIR/ecm|" aliqueit.ini
+sed -i -e "s|^ecmpy_cmd = .*$|ecmpy_cmd = $ROOTBINDIR/ecm.py|" aliqueit.ini
+sed -i -e "s|^yafu_cmd = .*$|yafu_cmd = $ROOTBINDIR/yafu|" aliqueit.ini
+sed -i -e "s|^msieve_cmd = .*$|msieve_cmd = $ROOTBINDIR/msieve|" aliqueit.ini
+sed -i -e "s|^ggnfs_cmd = .*$|ggnfs_cmd = $ROOTBINDIR/factmsieve.py|" aliqueit.ini
+sed -i -e "s|^use_ecmpy = .*$|use_ecmpy = true|" aliqueit.ini
+sed -i -e "s|^gnfs_cutoff = .*$|gnfs_cutoff = 95|" aliqueit.ini
+
+sed -i -e "s|verify_terminations = false;|verify_terminations = false|" aliqueit.ini
+
+cp aliqueit.ini $BINDIR
+cp aliqueit.txt $BINDIR
+
+cd src/aliqueit
+
+sed -i -e "s|GMP_DIR = ../../../../gmp|GMP_DIR = $GMPDIR/include|" Makefile
+sed -i -e "s|LIBS = -L/usr/local/lib -lgmp|LIBS = -L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib -lgmp|" Makefile
+patch < $BASEDIR/b2scale.patch
+
+make
+cp aliqueit $BINDIR
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/aliqueit ]                                      && ln -srf $BINDIR/aliqueit     $ROOTBINDIR/aliqueit
+    [ -f $BINDIR/aliqueit.txt ]                                  && ln -srf $BINDIR/aliqueit.txt $ROOTBINDIR/aliqueit.txt
+    [ -f $BINDIR/aliqueit.ini -a ! -f $ROOTBINDIR/aliqueit.ini ] && cp $BINDIR/aliqueit.ini      $ROOTBINDIR/
+fi
+
+exit 0

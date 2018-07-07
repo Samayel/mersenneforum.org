@@ -28,7 +28,7 @@ $BASEDIR/factMsieve.pl/latest/build
 $BASEDIR/cado-nfs/stable/build-shared
 $BASEDIR/cado-nfs/latest/build-shared
 
-$BASEDIR/aliqueit/stable/build-shared
+$BASEDIR/aliqueit/latest/build-shared
 
 $BASEDIR/ali.pl/latest/build
 $BASEDIR/yafu.pl/latest/build
