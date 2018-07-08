@@ -3,7 +3,6 @@
 set -e
 
 TYPE=$1
-CONFIGUREFLAGS=$2
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
@@ -35,15 +34,24 @@ pushd $SRCDIR
 
 tar -xz --strip 1 --file=../../ecm-trunk-3030.tar.gz
 
+BITS=64
+ARCH=native
+
 libtoolize
 autoreconf -i
 
-CFLAGS="-m64 -march=native -mtune=native" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" ./configure --enable-$TYPE $CONFIGUREFLAGS --prefix=$BINDIR --with-gmp=$GMPDIR
+if [ "$TYPE" == "shared" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH"                                                    LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-shared --disable-static --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR
+elif [ "$TYPE" == "static" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" LDFLAGS="-static -static-libgcc -static-libstdc++" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-static --disable-shared --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR
+fi
+
 make
 make ecm-params
 make
 make check
 make install
+make installcheck
 
 popd
 
