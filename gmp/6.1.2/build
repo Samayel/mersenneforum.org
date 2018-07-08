@@ -3,7 +3,6 @@
 set -e
 
 TYPE=$1
-CONFIGUREFLAGS=$2
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
@@ -29,7 +28,15 @@ pushd $SRCDIR
 
 tar -xj --strip 1 --file=../../gmp-6.1.2.tar.bz2
 
-CFLAGS="-m64 -march=native -mtune=native" ./configure --enable-$TYPE $CONFIGUREFLAGS --enable-cxx --prefix=$BINDIR
+BITS=64
+ARCH=native
+
+if [ "$TYPE" == "shared" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" --enable-shared --disable-static --enable-cxx --prefix=$BINDIR
+elif [ "$TYPE" == "static" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" --enable-static --disable-shared --enable-cxx --prefix=$BINDIR
+fi
+
 make
 make check
 make install
