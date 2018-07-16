@@ -31,8 +31,25 @@ pushd $SRCDIR
 
 tar -xz --strip 1 --file=../../msieve153_src.tar.gz
 
-sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include \n\1|" Makefile
-sed -i -e "s|\(# tweak the compile flags\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib  -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib \n\n\1|" Makefile
+BITS=64
+ARCH=native
+
+sed -i -e "s|OPT_FLAGS = -O3 -fomit-frame-pointer -march=native|OPT_FLAGS = -O3 -fomit-frame-pointer -m$BITS -march=$ARCH -mtune=$ARCH|" Makefile
+
+sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$GMPDIR/include \n\1|"   Makefile
+sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$ECMDIR/include \n\n\1|" Makefile
+
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -L$GMPDIR/lib \n\1|"   Makefile
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -L$ECMDIR/lib \n\n\1|" Makefile
+
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -Wl,-rpath -Wl,$GMPDIR/lib \n\1|"   Makefile
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -Wl,-rpath -Wl,$ECMDIR/lib \n\n\1|" Makefile
+
+if [ "$TYPE" == "shared" ]; then
+    true
+elif [ "$TYPE" == "static" ]; then
+    sed -i -e "s|\(# tweak the compile flags\)|LIBS += -static -static-libgcc -static-libstdc++ \n\n\1|" Makefile
+fi
 
 make all ECM=1 NO_ZLIB=1
 
