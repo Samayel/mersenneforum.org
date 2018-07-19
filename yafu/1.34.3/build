@@ -34,10 +34,29 @@ unzip ../../yafu-1.34-src.zip
 mv ./yafu-1.34.3/* .
 rm -rf ./yafu-1.34.3
 
-sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include -I$MSIEVEDIR/include \n\1|" Makefile
-sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib     -L$MSIEVEDIR/lib     -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
+BITS=64
+ARCH=native
 
-make x86_64 NFS=1 USE_SSE41=1     # USE_AVX2=1
+sed -i -e "s|OPT_FLAGS = -O3|OPT_FLAGS = -O3 -m$BITS -march=$ARCH -mtune=$ARCH|" Makefile
+
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|INC += -I$GMPDIR/include \n\1|"      Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|INC += -I$ECMDIR/include \n\1|"      Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|INC += -I$MSIEVEDIR/include \n\n\1|" Makefile
+
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -L$GMPDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -L$ECMDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -L$MSIEVEDIR/lib \n\n\1|" Makefile
+
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -Wl,-rpath -Wl,$GMPDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -Wl,-rpath -Wl,$ECMDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
+
+if [ "$TYPE" == "shared" ]; then
+    make x86_64          NFS=1 USE_SSE41=1     # USE_AVX2=1
+elif [ "$TYPE" == "static" ]; then
+    sed -i -e "s|\(# modify these for your particular gmp/gmp-ecm installation\)|LIBS += -static -static-libgcc -static-libstdc++ \n\n\1|" Makefile
+    make x86_64 STATIC=1 NFS=1 USE_SSE41=1     # USE_AVX2=1
+fi
 
 popd
 

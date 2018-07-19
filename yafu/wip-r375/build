@@ -36,12 +36,31 @@ pushd $SRCDIR
 
 tar -xz --strip 1 --file=../../yafu-code-375-branches-wip.tar.gz
 
-sed -i -e "s|\(# ===================== compiler options =========================\)|CFLAGS += -I$GMPDIR/include -I$ECMDIR/include -I$MSIEVEDIR/include \n\1|" Makefile
-sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS +=   -L$GMPDIR/lib     -L$ECMDIR/lib     -L$MSIEVEDIR/lib     -Wl,-rpath -Wl,$GMPDIR/lib -Wl,-rpath -Wl,$ECMDIR/lib -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
+BITS=64
+ARCH=native
+
+sed -i -e "s|OPT_FLAGS = -O3|OPT_FLAGS = -O3 -m$BITS -march=$ARCH -mtune=$ARCH|" Makefile
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|INC += -I$GMPDIR/include \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|INC += -I$ECMDIR/include \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|INC += -I$MSIEVEDIR/include \n\n\1|" Makefile
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -L$GMPDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -L$ECMDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -L$MSIEVEDIR/lib \n\n\1|" Makefile
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$GMPDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$ECMDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
 
 sed -i -e 's|\(printf("error Q != RHS\\n");\)|// \1|' factor/qs/siqs_test.c
 
-make all NFS=1 USE_SSE41=1     # USE_AVX2=1
+if [ "$TYPE" == "shared" ]; then
+    make all          NFS=1 USE_SSE41=1     # USE_AVX2=1
+elif [ "$TYPE" == "static" ]; then
+    sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -static -static-libgcc -static-libstdc++ \n\n\1|" Makefile
+    make all STATIC=0 NFS=1 USE_SSE41=1     # USE_AVX2=1
+fi
 
 popd
 
