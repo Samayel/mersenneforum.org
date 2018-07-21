@@ -7,6 +7,7 @@ TYPE=$1
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
 GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+GMPSTATICDIR=$( cd "$BASEDIR/../../gmp/latest/bin/static" || cd "$BASEDIR/../../gmp/6.1.2/bin/static" && pwd -P )
 
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
@@ -57,12 +58,12 @@ cp bin/* $BINDIR
 
 pushd src/experimental/lasieve4_64
 
-sed -i -e "s|-march=k8 -mtune=k8|-march=$ARCH -mtune=$ARCH|"                 athlon64/Makefile
-sed -i -e "s|^CFLAGS=|CFLAGS=-I$GMPDIR/include |"                            athlon64/Makefile
+sed -i -e "s|-march=k8 -mtune=k8|-march=$ARCH -mtune=$ARCH|"                             athlon64/Makefile
+sed -i -e "s|^CFLAGS=|CFLAGS=-I$GMPSTATICDIR/include |"                                  athlon64/Makefile
 
-sed -i -e "s|-march=k8 -mtune=k8|-march=$ARCH -mtune=$ARCH|"                 Makefile
-sed -i -e "s|^INC=|INC=-I$GMPDIR/include |"                                  Makefile
-sed -i -e "s|^LIBFLAGS=|LIBFLAGS=-L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib |" Makefile
+sed -i -e "s|-march=k8 -mtune=k8|-march=$ARCH -mtune=$ARCH|"                             Makefile
+sed -i -e "s|^INC=|INC=-I$GMPSTATICDIR/include |"                                        Makefile
+sed -i -e "s|^LIBFLAGS=|LIBFLAGS=-L$GMPSTATICDIR/lib -Wl,-rpath -Wl,$GMPSTATICDIR/lib |" Makefile
 
 git apply $BASEDIR/asm.patch
 
