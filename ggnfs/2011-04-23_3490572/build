@@ -40,8 +40,8 @@ tar -xz --strip 1 --file=../../ggnfs-master-3490572.tar.gz
 
 ARCH=native
 
-sed -i -e "s|^LOCALINC=\(.*\)$|LOCALINC=-I$GMPDIR/include|"                                     src/Makefile
-sed -i -e "s|^LOCALLIB=\(.*\)$|LOCALLIB=-L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib|"              src/Makefile
+sed -i -e "s|^LOCALINC=.*$|LOCALINC=-I$GMPDIR/include|"                                         Makefile
+sed -i -e "s|^LOCALLIB=.*$|LOCALLIB=-L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib|"                  Makefile
 
 sed -i -e "s|ALLOPT=.*$|ALLOPT=-march=$ARCH -mtune=$ARCH -m64 -pipe|"                           src/Makefile
 sed -i -e 's|LSBINS=latsiever polsel|LSBINS=polsel|'                                            src/Makefile
