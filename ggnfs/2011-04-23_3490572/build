@@ -40,9 +40,10 @@ tar -xz --strip 1 --file=../../ggnfs-master-3490572.tar.gz
 
 ARCH=native
 
+sed -i -e "s|^LOCALINC=\(.*\)$|LOCALINC=-I$GMPDIR/include|"                                     src/Makefile
+sed -i -e "s|^LOCALLIB=\(.*\)$|LOCALLIB=-L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib|"              src/Makefile
+
 sed -i -e "s|ALLOPT=.*$|ALLOPT=-march=$ARCH -mtune=$ARCH -m64 -pipe|"                           src/Makefile
-sed -i -e "s|^INC=\(.*\)$|INC=\1 -I$GMPDIR/include|"                                            src/Makefile
-sed -i -e "s|^LIBFLAGS=\(.*\)$|LIBFLAGS=\1 -L$GMPDIR/lib -Wl,-rpath -Wl,$GMPDIR/lib|"           src/Makefile
 sed -i -e 's|LSBINS=latsiever polsel|LSBINS=polsel|'                                            src/Makefile
 sed -i -e 's|strip $(BINS) ../bin/gnfs-lasieve4I1?e ../bin/pol51*|strip $(BINS) ../bin/pol51*|' src/Makefile
 
@@ -50,6 +51,7 @@ if [ "$TYPE" == "shared" ]; then
     true
 elif [ "$TYPE" == "static" ]; then
     sed -i -e "s|^LIBS=\(.*\)$|LIBS=\1 -static -static-libgcc -static-libstdc++|"               src/Makefile
+    sed -i -e "s|^LIBS=\(.*\)$|LIBS=\1 -static -static-libgcc -static-libstdc++|"               src/pol5/Makefile
 fi
 
 make x86_64
