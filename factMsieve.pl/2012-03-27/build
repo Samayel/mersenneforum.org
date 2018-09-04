@@ -18,7 +18,7 @@ mkdir -p $ROOTBINDIR
 
 pushd $BASEDIR
 
-[ -f factMsieve.pl.txt ] || wget -O factMsieve.pl.txt 'http://ftp.mersenneforum.org/attachment.php?attachmentid=7829&d=1332864153'
+[ -f factMsieve.pl.txt ] || wget -O factMsieve.pl.txt 'http://www.mersenneforum.org/attachment.php?attachmentid=7829&d=1332864153'
 
 popd
 
