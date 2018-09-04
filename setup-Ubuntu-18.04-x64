@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+sudo apt install tar gzip unzip wget git subversion recode
+sudo apt install build-essential m4 autoconf automake cmake libtool openmpi-bin libopenmpi-dev libz-dev
