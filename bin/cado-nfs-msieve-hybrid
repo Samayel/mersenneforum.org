@@ -1,0 +1,17 @@
+#!/bin/bash/
+
+# original version: https://www.mersenneforum.org/showpost.php?p=497313&postcount=306 by EdH
+
+cd Math/cado-nfs
+./cado-nfs.py $1 tasks.workdir=/tmp/hybrid tasks.filter.run=false
+echo "Finished cado-nfs!"
+cd /tmp/hybrid
+cat c*.upload/*.gz >comp.dat.gz
+cat *.poly >comp.polyT
+mv comp.polyT comp.poly
+echo "n: $1" >comp.n
+echo "N $1" >comp.fb
+~/Math/cado-nfs/poly2fb
+~/Math/msieve/msieve -i comp.n -s comp.dat.gz -l compmsieve.log -nf comp.fb -t 8 -nc
+cat compmsieve.log | grep " factor: "
+cat compmsieve.log | grep " factor: " > ~/FactorList
