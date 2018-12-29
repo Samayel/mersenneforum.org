@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f primesieve-7.2.tar.gz ] || wget -O primesieve-7.2.tar.gz https://github.com/kimwalisch/primesieve/archive/v7.2.tar.gz
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../primesieve-7.2.tar.gz
+
+export LDFLAGS="-Wl,-rpath -Wl,$BINDIR/lib"
+
+cmake -DCMAKE_INSTALL_PREFIX=$BINDIR -DBUILD_TESTS=ON .
+make
+make test
+make install
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/primesieve ] && ln -srf $BINDIR/bin/primesieve $ROOTBINDIR/primesieve
+fi
+
+exit 0
