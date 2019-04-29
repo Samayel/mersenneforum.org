@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f primecount-4.7-backup.tar.gz ] || wget -O primecount-4.7-backup.tar.gz https://github.com/kimwalisch/primecount/archive/v4.7-backup.tar.gz
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../primecount-4.7-backup.tar.gz
+
+cmake -DCMAKE_INSTALL_PREFIX=$BINDIR -DBUILD_TESTS=ON .
+make
+make test
+make install
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/primecount ] && ln -srf $BINDIR/bin/primecount $ROOTBINDIR/primecount-backup
+fi
+
+exit 0
