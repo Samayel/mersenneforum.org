@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f primecount-4.5.tar.gz ] || wget -O primecount-4.5.tar.gz https://github.com/kimwalisch/primecount/archive/v4.5.tar.gz
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../primecount-4.5.tar.gz
+
+sed -i -e "s|CMAKE_VERSION VERSION_GREATER_EQUAL|NOT CMAKE_VERSION VERSION_LESS|" CMakeLists.txt
+sed -i -e "s|CMAKE_VERSION VERSION_GREATER_EQUAL|NOT CMAKE_VERSION VERSION_LESS|" lib/primesieve/CMakeLists.txt
+
+cmake -DCMAKE_INSTALL_PREFIX=$BINDIR -DBUILD_TESTS=ON .
+make
+make test
+make install
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/primecount ] && ln -srf $BINDIR/bin/primecount $ROOTBINDIR/primecount
+fi
+
+exit 0
