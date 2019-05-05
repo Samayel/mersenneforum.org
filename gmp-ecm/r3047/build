@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f ecm-trunk-3047.tar.gz ]; then
+    svn checkout -r3047 https://scm.gforge.inria.fr/anonscm/svn/ecm/trunk/ ecm-trunk-3047
+    tar -czf ecm-trunk-3047.tar.gz ecm-trunk-3047
+    rm -rf ecm-trunk-3047
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../ecm-trunk-3047.tar.gz
+
+BITS=64
+ARCH=native
+
+libtoolize
+autoreconf -i
+
+if [ "$TYPE" == "shared" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH"                                                    LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-shared --disable-static --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR
+elif [ "$TYPE" == "static" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" LDFLAGS="-static -static-libgcc -static-libstdc++" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-static --disable-shared --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR
+fi
+
+make
+make ecm-params
+make
+make check
+make install
+make installcheck
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/ecm -a ! -f $BINDIR/bin/ecm.exe ] && ln -srf $BINDIR/bin/ecm     $ROOTBINDIR/ecm
+    [ -f $BINDIR/bin/ecm.exe ]                         && cp $BINDIR/bin/ecm.exe      $ROOTBINDIR/
+    [ -f $BINDIR/bin/libecm-1.dll ]                    && cp $BINDIR/bin/libecm-1.dll $ROOTBINDIR/
+fi
+
+exit 0
