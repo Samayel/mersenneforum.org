@@ -47,6 +47,8 @@ elif [ "$TYPE" == "static" ]; then
     ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" LDFLAGS="-static -static-libgcc -static-libstdc++" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-static --disable-shared --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR --with-gwnum=$GWNUMDIR
 fi
 
+sed -i -e "s|^\(LIBS =.*\) $GWNUMDIR/gwnum.a|\1 $GWNUMDIR/gwnum.a \$(GMPLIB)|" Makefile
+
 make
 make ecm-params
 make
