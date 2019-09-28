@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f p95v298b6.source.zip ] || wget https://www.mersenne.org/ftp_root/gimps/p95v298b6.source.zip
+
+popd
+
+pushd $SRCDIR
+
+unzip ../../p95v298b6.source.zip || true
+cd gwnum
+
+make -f make64
+
+mkdir $BINDIR/lib
+cp gwnum.a $BINDIR/lib
+
+popd
+
+exit 0
