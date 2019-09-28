@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"     || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp-ecm/r3052/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f msieve-code-1030-trunk.tar.gz ]; then
+    svn checkout -r1030 https://svn.code.sf.net/p/msieve/code/trunk msieve-code-1030-trunk
+    tar -czf msieve-code-1030-trunk.tar.gz msieve-code-1030-trunk
+    rm -rf msieve-code-1030-trunk
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../msieve-code-1030-trunk.tar.gz
+
+BITS=64
+ARCH=native
+
+sed -i -e "s|OPT_FLAGS = -O3 -fomit-frame-pointer -march=native|OPT_FLAGS = -O3 -fomit-frame-pointer -m$BITS -march=$ARCH -mtune=$ARCH|" Makefile
+
+sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$GMPDIR/include \n\1|"   Makefile
+sed -i -e "s|\(# tweak the compile flags\)|CFLAGS += -I$ECMDIR/include \n\n\1|" Makefile
+
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -L$GMPDIR/lib \n\1|"   Makefile
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -L$ECMDIR/lib \n\n\1|" Makefile
+
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -Wl,-rpath -Wl,$GMPDIR/lib \n\1|"   Makefile
+sed -i -e "s|\(# tweak the compile flags\)|LIBS += -Wl,-rpath -Wl,$ECMDIR/lib \n\n\1|" Makefile
+
+if [ "$TYPE" == "shared" ]; then
+    true
+elif [ "$TYPE" == "static" ]; then
+    sed -i -e "s|\(# tweak the compile flags\)|LIBS += -static -static-libgcc -static-libstdc++ \n\n\1|" Makefile
+fi
+
+make all ECM=1 NO_ZLIB=1
+
+popd
+
+mkdir -p $BINDIR/{bin,include,lib}
+cp $SRCDIR/msieve $BINDIR/bin
+cp $SRCDIR/include/msieve.h $BINDIR/include
+cp $SRCDIR/libmsieve.a $BINDIR/lib
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/msieve ] && ln -srf $BINDIR/bin/msieve $ROOTBINDIR/msieve
+fi
+
+exit 0
