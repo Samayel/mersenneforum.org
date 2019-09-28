@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"     || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp-ecm/r3047/bin/$TYPE" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f cado-nfs-master-d7f553eb4.tar.gz ]; then
+    git clone https://scm.gforge.inria.fr/anonscm/git/cado-nfs/cado-nfs.git cado-nfs-master-d7f553eb4
+    git -C cado-nfs-master-d7f553eb4 checkout d7f553eb45ea0aaadd9e6f6e158af0226273420a
+    tar -czf cado-nfs-master-d7f553eb4.tar.gz cado-nfs-master-d7f553eb4
+    rm -rf cado-nfs-master-d7f553eb4
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../cado-nfs-master-d7f553eb4.tar.gz
+
+cp local.sh.example local.sh
+
+echo >> local.sh
+echo "GMP=$GMPDIR" >> local.sh
+echo "GMPECM=$ECMDIR" >> local.sh
+echo "PREFIX=$BINDIR" >> local.sh
+
+sed -i -e 's|set(CMAKE_REQUIRED_INCLUDES ${GMPECM_INCDIR})|set(CMAKE_REQUIRED_INCLUDES ${GMP_INCDIR} ${GMPECM_INCDIR})|' config/gmpecm.cmake
+
+make
+make install
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/cado-nfs-client.py ] && ln -srf $BINDIR/bin/cado-nfs-client.py $ROOTBINDIR/cado-nfs-client.py
+    [ -f $BINDIR/bin/cado-nfs.py ]        && ln -srf $BINDIR/bin/cado-nfs.py        $ROOTBINDIR/cado-nfs.py
+fi
+
+exit 0
