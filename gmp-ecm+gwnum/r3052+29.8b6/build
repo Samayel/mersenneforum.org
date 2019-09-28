@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE" && pwd -P )
+GWNUMDIR=$( cd "$BASEDIR/../../gwnum/29.8b6/src/$TYPE/gwnum" && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f ecm-trunk-3052.tar.gz ]; then
+    svn checkout -r3052 https://scm.gforge.inria.fr/anonscm/svn/ecm/trunk/ ecm-trunk-3052
+    tar -czf ecm-trunk-3052.tar.gz ecm-trunk-3052
+    rm -rf ecm-trunk-3052
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../ecm-trunk-3052.tar.gz
+
+BITS=64
+ARCH=native
+
+libtoolize
+autoreconf -i
+
+if [ "$TYPE" == "shared" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH"                                                    LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-shared --disable-static --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR --with-gwnum=$GWNUMDIR
+elif [ "$TYPE" == "static" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" LDFLAGS="-static -static-libgcc -static-libstdc++" LD_LIBRARY_PATH="$GMPDIR/lib:$LD_LIBRARY_PATH" --enable-static --disable-shared --enable-asm-redc --disable-assert --prefix=$BINDIR --with-gmp=$GMPDIR --with-gwnum=$GWNUMDIR
+fi
+
+make
+make ecm-params
+make
+# make check
+make install
+# make installcheck
+
+popd
+
+if [ "$TYPE" == "static" ]; then
+    [ -f $BINDIR/bin/ecm ] && ln -srf $BINDIR/bin/ecm $ROOTBINDIR/ecm+gwnum
+fi
+
+exit 0
