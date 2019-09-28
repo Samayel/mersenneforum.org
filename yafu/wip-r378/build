@@ -8,7 +8,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
 GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"       || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
 ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE"   || cd "$BASEDIR/../../gmp-ecm/r3052/bin/$TYPE" && pwd -P )
-MSIEVEDIR=$( cd "$BASEDIR/../../msieve/r1025/bin/$TYPE"  || cd "$BASEDIR/../../msieve/r1030/bin/$TYPE"  && pwd -P )
+MSIEVEDIR=$( cd "$BASEDIR/../../msieve/latest/bin/$TYPE" || cd "$BASEDIR/../../msieve/r1030/bin/$TYPE"  && pwd -P )
 
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
@@ -56,6 +56,8 @@ sed -i -e "s|\(# ===================== compiler options ========================
 sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
 
 sed -i -e 's|\(printf("error Q != RHS\\n");\)|// \1|' factor/qs/siqs_test.c
+
+ln -sr factor/qs/cofactorize.h include/
 
 if [ "$TYPE" == "shared" ]; then
     make all          NFS=1 USE_SSE41=1     # USE_AVX2=1
