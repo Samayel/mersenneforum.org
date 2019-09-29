@@ -49,7 +49,7 @@ fi
 
 sed -i -e "s|^\(LIBS =.*\) $GWNUMDIR/gwnum.a|\1 $GWNUMDIR/gwnum.a \$(GMPLIB)|" Makefile
 
-make
+make || (make libecm.la ; make)
 make ecm-params
 make
 # make check
