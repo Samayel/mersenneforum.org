@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"       || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE"   || cd "$BASEDIR/../../gmp-ecm/r3052/bin/$TYPE" && pwd -P )
+MSIEVEDIR=$( cd "$BASEDIR/../../msieve/latest/bin/$TYPE" || cd "$BASEDIR/../../msieve/r1030/bin/$TYPE"  && pwd -P )
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+if [ ! -f yafu-code-379-branches-wip.tar.gz ]; then
+    svn checkout -r379 https://svn.code.sf.net/p/yafu/code/branches/wip yafu-code-379-branches-wip
+    tar -czf yafu-code-379-branches-wip.tar.gz yafu-code-379-branches-wip
+    rm -rf yafu-code-379-branches-wip
+fi
+
+popd
+
+pushd $SRCDIR
+
+tar -xz --strip 1 --file=../../yafu-code-379-branches-wip.tar.gz
+
+BITS=64
+ARCH=native
+
+sed -i -e "s|CC = gcc-7.3.0|CC = gcc|" Makefile
+
+sed -i -e "s|OPT_FLAGS = -O3|OPT_FLAGS = -O3 -m$BITS -march=$ARCH -mtune=$ARCH|" Makefile
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|INC += -I$GMPDIR/include \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|INC += -I$ECMDIR/include \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|INC += -I$MSIEVEDIR/include \n\n\1|" Makefile
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -L$GMPDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -L$ECMDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -L$MSIEVEDIR/lib \n\n\1|" Makefile
+
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$GMPDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$ECMDIR/lib \n\1|"      Makefile
+sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -Wl,-rpath -Wl,$MSIEVEDIR/lib \n\n\1|" Makefile
+
+sed -i -e 's|\(printf("error Q != RHS\\n");\)|// \1|' factor/qs/siqs_test.c
+
+ln -sr factor/qs/cofactorize.h include/
+
+if [ "$TYPE" == "shared" ]; then
+    make all          NFS=1 USE_SSE41=1     # USE_AVX2=1
+elif [ "$TYPE" == "static" ]; then
+    sed -i -e "s|\(# ===================== compiler options =========================\)|LIBS += -static -static-libgcc -static-libstdc++ \n\n\1|" Makefile
+    make all STATIC=0 NFS=1 USE_SSE41=1     # USE_AVX2=1
+fi
+
+popd
+
+cp $SRCDIR/yafu $BINDIR/
+cp $SRCDIR/yafu.ini $BINDIR/
+
+sed -i -e 's|^threads=.*$|threads=2|' $BINDIR/yafu.ini
+sed -i -e 's|^ggnfs_dir=.*$|ggnfs_dir=./ggnfs/|' $BINDIR/yafu.ini
+sed -i -e 's|^ecm_path=.*$|ecm_path=./ecm|' $BINDIR/yafu.ini
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/yafu ]                                  && ln -srf $BINDIR/yafu $ROOTBINDIR/yafu
+    [ -f $BINDIR/yafu.ini -a ! -f $ROOTBINDIR/yafu.ini ] && cp $BINDIR/yafu.ini $ROOTBINDIR/
+fi
+
+exit 0
