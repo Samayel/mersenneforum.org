@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -e
+
+TYPE=$1
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
+
+BINDIR=$BASEDIR/bin/$TYPE
+SRCDIR=$BASEDIR/src/$TYPE
+
+ROOTBINDIR="$( cd "$BASEDIR/../../bin" && pwd -P )"
+
+rm -rf $BINDIR
+rm -rf $SRCDIR
+
+mkdir -p $BINDIR
+mkdir -p $SRCDIR
+mkdir -p $ROOTBINDIR
+
+pushd $BASEDIR
+
+[ -f gmp-6.2.0.tar.bz2 ] || wget https://gmplib.org/download/gmp/gmp-6.2.0.tar.bz2
+
+popd
+
+pushd $SRCDIR
+
+tar -xj --strip 1 --file=../../gmp-6.2.0.tar.bz2
+
+BITS=64
+ARCH=native
+
+if [ "$TYPE" == "shared" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" --enable-shared --disable-static --enable-cxx --prefix=$BINDIR
+elif [ "$TYPE" == "static" ]; then
+    ./configure ABI=$BITS CFLAGS="-O3 -m$BITS -march=$ARCH -mtune=$ARCH" --enable-static --disable-shared --enable-cxx --prefix=$BINDIR
+fi
+
+make
+make check
+make install
+
+popd
+
+if [ "$TYPE" == "shared" ]; then
+    [ -f $BINDIR/bin/libgmp-10.dll ] && cp $BINDIR/bin/libgmp-10.dll $ROOTBINDIR/libgmp-10.dll
+fi
+
+exit 0
