@@ -6,8 +6,8 @@ TYPE=$1
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd -P )"
 
-GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"     || cd "$BASEDIR/../../gmp/6.1.2/bin/$TYPE"     && pwd -P )
-ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp-ecm/r3052/bin/$TYPE" && pwd -P )
+GMPDIR=$( cd "$BASEDIR/../../gmp/latest/bin/$TYPE"     || cd "$BASEDIR/../../gmp/6.2.0/bin/$TYPE"     && pwd -P )
+ECMDIR=$( cd "$BASEDIR/../../gmp-ecm/latest/bin/$TYPE" || cd "$BASEDIR/../../gmp-ecm/r3076/bin/$TYPE" && pwd -P )
 
 BINDIR=$BASEDIR/bin/$TYPE
 SRCDIR=$BASEDIR/src/$TYPE
