@@ -1,0 +1,12 @@
+--- gmp_xface.h.orig	2019-09-28 19:08:38.000000000 +0200
++++ gmp_xface.h	2020-04-12 14:26:31.793926700 +0200
+@@ -50,8 +50,7 @@
+ static INLINE void uint64_2gmp(uint64 src, mpz_t dest) {
+ 
+ #if GMP_LIMB_BITS == 64
+-	dest->_mp_d[0] = src;
+-	dest->_mp_size = (src ? 1 : 0);
++	mpz_set_ui(dest, src);
+ #else
+ 	/* mpz_import is terribly slow */
+ 	mpz_set_ui(dest, (uint32)(src >> 32));
